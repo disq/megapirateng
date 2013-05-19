@@ -83,7 +83,7 @@
             // Datas sent every 1s           
             send_Time();
             send_GPS_position();
-//            send_GPS_altitude();
+            send_GPS_altitude();
             send_Voltage_ampere();
             send_Temperature2();  // num of Sats
          }
@@ -168,22 +168,13 @@
    //*********************************************************************************
 
    // GPS altitude
-/*   void send_GPS_altitude(void)
+   void send_GPS_altitude(void)
    {         
-      if (f.GPS_FIX && GPS_numSat >= 4)
+      if (g_gps->status() == GPS::GPS_OK && g_gps->num_sats>=4)
       {
-         int16_t Datas_GPS_altidute_bp;
-         uint16_t Datas_GPS_altidute_ap;
-
-         Datas_GPS_altidute_bp = GPS_altitude;
-         Datas_GPS_altidute_ap = 0;
-
-         sendDataHead(ID_GPS_altidute_bp);
-         write_FrSky16(Datas_GPS_altidute_bp);
-         sendDataHead(ID_GPS_altidute_ap);
-         write_FrSky16(Datas_GPS_altidute_ap);
+         sendTwoPart(ID_GPS_altidute_bp, ID_GPS_altidute_ap, g_gps->altitude/100);
       }
-   }*/
+   }
    
    // Temperature
    void send_Temperature1(void)
