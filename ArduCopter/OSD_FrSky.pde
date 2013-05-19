@@ -91,6 +91,7 @@
          {
             // Datas sent every 5s
             send_Temperature1();
+            send_RPM();
             cycleCounter = 0;       
          }
          if ((cycleCounter % 4) == 0) // cycleCounter%4==0 is true for 4, 8 and 40 (runs on all 3 instances)
@@ -187,7 +188,7 @@
    void send_RPM(void)
    {
       sendDataHead(ID_RPM);
-      write_FrSky16(0);
+      write_FrSky16(home_distance/100); // send home distance in meters
    }
 
 
