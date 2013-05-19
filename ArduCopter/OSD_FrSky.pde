@@ -33,7 +33,7 @@
   #define ID_Temperature2        0x05
   #define ID_Volt               0x06
   #define ID_Altitude_bp        0x10
-  #define ID_Altitude_ap        0x21 // Not supported ?
+  #define ID_Altitude_ap        0x21
   #define ID_GPS_speed_bp       0x11
   #define ID_GPS_speed_ap       0x19
   #define ID_Longitude_bp       0x12
@@ -272,7 +272,7 @@
    {
       if (g_gps->status() == GPS::GPS_OK)
       {
-         sendTwoPart(ID_Course_bp, ID_Course_ap, g_gps->ground_course*100);
+         sendTwoPart(ID_Course_bp, ID_Course_ap, g_gps->ground_course/100);
       }
 #ifdef FRSKY_SEND_FILLER_DATA
       else
