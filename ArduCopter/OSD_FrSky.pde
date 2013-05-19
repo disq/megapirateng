@@ -240,8 +240,8 @@
          uint16_t Datas_Latitude_bp;
          uint16_t Datas_Latitude_ap;
          uint16_t Datas_N_S;
-         float lat = g_gps->latitude / 10000000.0f;
-         float lon = g_gps->longitude / 10000000.0f;
+         float lat = g_gps->latitude / 10000000.0f * 100;
+         float lon = g_gps->longitude / 10000000.0f * 100;
          Datas_Longitude_bp = lon;
          Datas_Longitude_ap = (lon-int(lon))*10000;
          Datas_E_W = lon < 0 ? 'W' : 'E';
