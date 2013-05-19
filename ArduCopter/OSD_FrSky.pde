@@ -330,7 +330,7 @@ void send_Fuel_level(void) {
 
   uint16_t Datas_Fuel_level;
 
-  Datas_Fuel_level = 25; //1st quater for power
+  Datas_Fuel_level = 25; //1st quarter for power
 
   if (g_gps->status() == GPS::GPS_OK)
     Datas_Fuel_level += 25; //2nd for the fix.
@@ -348,7 +348,7 @@ void send_Fuel_level(void) {
 // OSD Initialization
 void osd_init()
 {
-	Serial1.begin(9600);
+	Serial1.begin(TELEMETRY_FRSKY_BAUD);
 }
 
 void osd_heartbeat_50Hz()
