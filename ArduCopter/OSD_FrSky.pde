@@ -8,6 +8,7 @@
 
   // user defines
   //#define FAS_100  //if commment out, MultiWii vBat voltage will be send instead of FrSky FAS 100 voltage
+#define FRSKY_SEND_FILLER_DATA // send 13.37 as filler data in heading and gps speed
 
   // Serial config datas
   #define TELEMETRY_FRSKY_SERIAL 1
@@ -75,7 +76,7 @@
          {     
             // Datas sent every 500ms
             send_Altitude();
-//            send_Course();
+            send_Course();
             send_GPS_speed();
          }
          if ((cycleCounter % 8) == 0)
@@ -217,15 +218,16 @@
    // GPS speed
    void send_GPS_speed(void)
    {
-      if (g_gps->fix)
-      {           
-         float gps_speed_ms = g_gps->ground_speed*0.01;
-     
-         sendDataHead(ID_GPS_speed_bp);
-         write_FrSky16(gps_speed_ms);
-         sendDataHead(ID_GPS_speed_ap);
-         write_FrSky16((gps_speed_ms-int(gps_speed_ms))*100);
+      if (g_gps->status() == GPS::GPS_OK)
+      {
+         sendTwoPart(ID_GPS_speed_bp, ID_GPS_speed_ap, g_gps->ground_speed/100 * 1.94384449); // Knots
       }
+#ifdef FRSKY_SEND_FILLER_DATA
+      else
+      {
+         sendTwoPart(ID_GPS_speed_bp, ID_GPS_speed_ap, 13.37 * 1.94384449);
+      }
+#endif
    }
 
    // GPS position
@@ -262,19 +264,19 @@
    }
 
    // Course
-/*   void send_Course(void)
+   void send_Course(void)
    {
-      uint16_t Datas_Course_bp;
-      uint16_t Datas_Course_ap;
-
-      Datas_Course_bp = heading;
-      Datas_Course_ap = 0;
-
-      sendDataHead(ID_Course_bp);
-      write_FrSky16(Datas_Course_bp);
-      sendDataHead(ID_Course_ap);
-      write_FrSky16(Datas_Course_ap);
-   }*/
+      if (g_gps->status() == GPS::GPS_OK)
+      {
+         sendTwoPart(ID_Course_bp, ID_Course_ap, g_gps->ground_course*100);
+      }
+#ifdef FRSKY_SEND_FILLER_DATA
+      else
+      {
+         sendTwoPart(ID_Course_bp, ID_Course_ap, 13.37);
+      }
+#endif
+   }
 
    // Time
    void send_Time(void)
