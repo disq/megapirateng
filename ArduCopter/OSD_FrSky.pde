@@ -87,6 +87,7 @@
             send_GPS_altitude();
             send_Voltage_ampere();
             send_Temperature2(); // num of Sats
+            send_Fuel(); // num of Sats as Fuel
          }
          if (cycleCounter == 40)
          {
@@ -322,6 +323,16 @@
          write_FrSky16(Datas_Current);
 
    }
+
+void send_Fuel(void)
+{
+      uint16_t Data_Num_Sat;
+
+         Data_Num_Sat = (g_gps->num_sats / 2) * 25;
+
+      sendDataHead(ID_Fuel_level);
+      write_FrSky16(Data_Num_Sat);
+}
 
 // OSD Initialization
 void osd_init()
