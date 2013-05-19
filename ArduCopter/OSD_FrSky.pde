@@ -155,7 +155,7 @@
          int16_t bpVal;
          uint16_t apVal;
 
-         bpVal = int(value); // value before the decimal point ("bp" is "before point")
+         bpVal = floor(value); // value before the decimal point ("bp" is "before point")
          apVal = (value - int(value)) * 100; // value after the decimal point
 
          sendDataHead(bpId);
