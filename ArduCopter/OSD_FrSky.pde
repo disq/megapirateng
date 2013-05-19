@@ -87,7 +87,7 @@
             send_GPS_altitude();
             send_Voltage_ampere();
             send_Temperature2(); // num of Sats
-            send_Fuel(); // num of Sats as Fuel
+            send_Fuel_level();
          }
          if (cycleCounter == 40)
          {
@@ -324,14 +324,25 @@
 
    }
 
-void send_Fuel(void)
-{
-      uint16_t Data_Num_Sat;
+// Fuel level
+// only 5 states [0,25,50,75,100]%
+void send_Fuel_level(void) {
 
-         Data_Num_Sat = (g_gps->num_sats / 2) * 25;
+  uint16_t Datas_Fuel_level;
 
-      sendDataHead(ID_Fuel_level);
-      write_FrSky16(Data_Num_Sat);
+  Datas_Fuel_level = 25; //1st quater for power
+
+  if (g_gps->status() == GPS::GPS_OK)
+    Datas_Fuel_level += 25; //2nd for the fix.
+
+  if (home_is_set)
+    Datas_Fuel_level += 25; //3rd for home set.
+
+  if (motors.armed())
+    Datas_Fuel_level += 25; //4th for arming
+
+  sendDataHead(ID_Fuel_level);
+  write_FrSky16(Datas_Fuel_level);
 }
 
 // OSD Initialization
