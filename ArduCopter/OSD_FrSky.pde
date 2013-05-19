@@ -12,7 +12,7 @@
 
   // Serial config datas
   #define TELEMETRY_FRSKY_SERIAL 1
-  #define TELEMETRY_FRSKY_BAUD 9600 
+  #define TELEMETRY_FRSKY_BAUD 9600
 
   // Timing
   #define Time_telemetry_send 125000
@@ -22,18 +22,18 @@
   // Frame protocol
   #define Protocol_Header   0x5E
   #define Protocol_Tail      0x5E
- 
+
   // Data Ids  (bp = before point; af = after point)
   // Official data IDs
-  #define ID_GPS_altidute_bp    0x01
-  #define ID_GPS_altidute_ap    0x09
-  #define ID_Temprature1        0x02
+  #define ID_GPS_altitude_bp    0x01
+  #define ID_GPS_altitude_ap    0x09
+  #define ID_Temperature1        0x02
   #define ID_RPM                0x03
   #define ID_Fuel_level         0x04
-  #define ID_Temprature2        0x05
+  #define ID_Temperature2        0x05
   #define ID_Volt               0x06
   #define ID_Altitude_bp        0x10
-  #define ID_Altitude_ap        0x21  // Not supported ?
+  #define ID_Altitude_ap        0x21 // Not supported ?
   #define ID_GPS_speed_bp       0x11
   #define ID_GPS_speed_ap       0x19
   #define ID_Longitude_bp       0x12
@@ -61,39 +61,39 @@
 
    // Main function FrSky telemetry
     void telemetry_frsky()
-   {         
-			uint32_t currentTime 			= micros(); 
+   {
+			uint32_t currentTime 			= micros();
       if (currentTime > FrSkyTime ) //
-      {         
+      {
          FrSkyTime = currentTime + Time_telemetry_send;
          cycleCounter++;
          // Datas sent every 125 ms
 //            send_Altitude();
 //            send_Accel();
-//            sendDataTail();   
+//            sendDataTail();
 
          if ((cycleCounter % 4) == 0)
-         {     
+         {
             // Datas sent every 500ms
             send_Altitude();
             send_Course();
             send_GPS_speed();
          }
          if ((cycleCounter % 8) == 0)
-         {     
-            // Datas sent every 1s           
+         {
+            // Datas sent every 1s
             send_Time();
             send_GPS_position();
             send_GPS_altitude();
             send_Voltage_ampere();
-            send_Temperature2();  // num of Sats
+            send_Temperature2(); // num of Sats
          }
          if (cycleCounter == 40)
          {
             // Datas sent every 5s
             send_Temperature1();
             send_RPM();
-            cycleCounter = 0;       
+            cycleCounter = 0;
          }
          if ((cycleCounter % 4) == 0) // cycleCounter%4==0 is true for 4, 8 and 40 (runs on all 3 instances)
          {
@@ -115,27 +115,27 @@
    void write_FrSky16(uint16_t Data)
    {
       uint8_t Data_send;
-      Data_send = Data;     
+      Data_send = Data;
       check_FrSky_stuffing(Data_send);
       Data_send = Data >> 8 & 0xff;
       check_FrSky_stuffing(Data_send);
    }
-   
+
    void check_FrSky_stuffing(uint8_t Data) //byte stuffing
    {
-      if (Data == 0x5E)   
+      if (Data == 0x5E)
       {
          write_FrSky8_internal(0x5D);
          write_FrSky8_internal(0x3E);
       }
-      else if (Data == 0x5D)   
+      else if (Data == 0x5D)
       {
          write_FrSky8_internal(0x5D);
          write_FrSky8_internal(0x3D);
       }
       else
       {
-         write_FrSky8_internal(Data);         
+         write_FrSky8_internal(Data);
       }
    }
 
@@ -147,7 +147,7 @@
 
    static void sendDataTail(void)
    {
-      write_FrSky8_internal(Protocol_Tail);     
+      write_FrSky8_internal(Protocol_Tail);
    }
 
    static void sendTwoPart(uint8_t bpId, uint8_t apId, float value)
@@ -166,22 +166,22 @@
 
 
    //*********************************************************************************
-   //-----------------   Telemetrie Datas   ------------------------------------------   
+   //-----------------   Telemetrie Datas   ------------------------------------------
    //*********************************************************************************
 
    // GPS altitude
    void send_GPS_altitude(void)
-   {         
+   {
       if (g_gps->status() == GPS::GPS_OK && g_gps->num_sats>=4)
       {
-         sendTwoPart(ID_GPS_altidute_bp, ID_GPS_altidute_ap, g_gps->altitude/100);
+         sendTwoPart(ID_GPS_altitude_bp, ID_GPS_altitude_ap, g_gps->altitude/100);
       }
    }
-   
+
    // Temperature
    void send_Temperature1(void)
    {
-      sendDataHead(ID_Temprature1);
+      sendDataHead(ID_Temperature1);
       write_FrSky16(barometer.get_temperature()/10);
    }
 
@@ -196,13 +196,13 @@
    // Temperature 2
    void send_Temperature2(void)
    {
-         sendDataHead(ID_Temprature2);
+         sendDataHead(ID_Temperature2);
          switch (g_gps->status()) {
            case GPS::GPS_OK:
-              write_FrSky16(100 + g_gps->num_sats);  // GPS sat count (100+: 3D fix)
+              write_FrSky16(100 + g_gps->num_sats); // GPS sat count (100+: 3D fix)
               break;
            case GPS::NO_FIX:
-              write_FrSky16(g_gps->num_sats);  // GPS sat count
+              write_FrSky16(g_gps->num_sats); // GPS sat count
               break;
            default: // GPS::NO_GPS
               write_FrSky16(-1);
@@ -282,7 +282,7 @@
    void send_Time(void)
    {
       uint32_t seconds_since_start = millis() / 1000;
-           
+
       sendDataHead(ID_Hour_Minute);
       write_FrSky8(uint16_t(seconds_since_start / 3600));
       write_FrSky8(uint16_t((seconds_since_start / 60) % 60));
@@ -306,13 +306,13 @@
       sendDataHead(ID_Acc_Y);
       write_FrSky16(Datas_Acc_Y);
       sendDataHead(ID_Acc_Z);
-      write_FrSky16(Datas_Acc_Z);     
+      write_FrSky16(Datas_Acc_Z);
    }*/
 
-   // Voltage (Ampere Sensor) 
+   // Voltage (Ampere Sensor)
    void send_Voltage_ampere(void)
    {
-         uint16_t Datas_Current;   
+         uint16_t Datas_Current;
 
 					float volts = battery_voltage1*2; //in 0.5v resolution
          sendTwoPart(ID_Voltage_Amp_bp, ID_Voltage_Amp_ap, volts);
@@ -338,4 +338,4 @@ void osd_heartbeat_10Hz()
 {
 }
 
-#endif 
+#endif
