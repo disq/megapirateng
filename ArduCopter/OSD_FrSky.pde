@@ -234,6 +234,7 @@
    // GPS position
    void send_GPS_position(void)
    {
+      if (g_gps->status() == GPS::GPS_OK) {
          uint16_t Datas_Longitude_bp;
          uint16_t Datas_Longitude_ap;
          uint16_t Datas_E_W;
@@ -262,6 +263,7 @@
          write_FrSky16(Datas_Latitude_ap);
          sendDataHead(ID_N_S);
          write_FrSky16(Datas_N_S);
+      }
    }
 
    // Course
