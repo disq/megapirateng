@@ -77,8 +77,6 @@
             send_Altitude();
 //            send_Course();
             send_GPS_speed();
-            sendDataTail();   
-
          }
          if ((cycleCounter % 8) == 0)
          {     
@@ -88,14 +86,16 @@
 //            send_GPS_altitude();
             send_Voltage_ampere();
             send_Temperature2();  // num of Sats
-            sendDataTail();           
          }
-
          if (cycleCounter == 40)
          {
             // Datas sent every 5s
             send_Temperature1();
             cycleCounter = 0;       
+         }
+         if ((cycleCounter % 4) == 0) // cycleCounter%4==0 is true for 4, 8 and 40 (runs on all 3 instances)
+         {
+            sendDataTail();
          }
       }
    }
