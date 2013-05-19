@@ -8,7 +8,7 @@
 
   // user defines
   //#define FAS_100  //if commment out, MultiWii vBat voltage will be send instead of FrSky FAS 100 voltage
-#define FRSKY_SEND_FILLER_DATA // send 13.37 as filler data in heading and gps speed
+//#define FRSKY_SEND_FILLER_DATA // send 13.37 as filler data in heading and gps speed
 
   // Serial config datas
   #define TELEMETRY_FRSKY_SERIAL 1
