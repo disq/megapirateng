@@ -42,7 +42,7 @@
   #define ID_Latitude_ap        0x1B
   #define ID_N_S                0x23
   #define ID_Course_bp          0x14
-  #define ID_Course_ap          0x24
+  #define ID_Course_ap          0x1C
   #define ID_Date_Month         0x15
   #define ID_Year               0x16
   #define ID_Hour_Minute        0x17
