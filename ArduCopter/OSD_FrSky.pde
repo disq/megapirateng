@@ -196,15 +196,16 @@
    void send_Temperature2(void)
    {
          sendDataHead(ID_Temprature2);
-         if (g_gps->status() == GPS::GPS_OK) {
-						if (g_gps->fix) {
-							write_FrSky16(g_gps->num_sats+100);  // GPS sat count, value > 100 mean 3D Fix
-						} else {
-							write_FrSky16(g_gps->num_sats);  // GPS sat count, value > 100 mean 3D Fix
-						}
-					} else {
-							write_FrSky16(-1);  // GPS disabled
-					}
+         switch (g_gps->status()) {
+           case GPS::GPS_OK:
+              write_FrSky16(100 + g_gps->num_sats);  // GPS sat count (100+: 3D fix)
+              break;
+           case GPS::NO_FIX:
+              write_FrSky16(g_gps->num_sats);  // GPS sat count
+              break;
+           default: // GPS::NO_GPS
+              write_FrSky16(-1);
+         }
    }
 
    // Altitude
