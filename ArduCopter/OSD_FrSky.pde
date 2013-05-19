@@ -148,6 +148,20 @@
       write_FrSky8_internal(Protocol_Tail);     
    }
 
+   static void sendTwoPart(uint8_t bpId, uint8_t apId, float value)
+   {
+         int16_t bpVal;
+         uint16_t apVal;
+
+         bpVal = int(value); // value before the decimal point ("bp" is "before point")
+         apVal = (value - int(value)) * 100; // value after the decimal point
+
+         sendDataHead(bpId);
+         write_FrSky16(bpVal);
+         sendDataHead(apId);
+         write_FrSky16(apVal);
+   }
+
 
    //*********************************************************************************
    //-----------------   Telemetrie Datas   ------------------------------------------   
@@ -204,18 +218,7 @@
    // Altitude
    void send_Altitude(void)
    {
-      int16_t Datas_altitude_bp;
-      uint16_t Datas_altitude_ap;
-      
-      float alt = current_loc.alt / 100;
-
-      Datas_altitude_bp = alt;
-      Datas_altitude_ap = (alt-int(alt))*100;
-
-      sendDataHead(ID_Altitude_bp);
-      write_FrSky16(Datas_altitude_bp);
-      sendDataHead(ID_Altitude_ap);
-      write_FrSky16(Datas_altitude_ap);
+         sendTwoPart(ID_Altitude_bp, ID_Altitude_ap, current_loc.alt/100);
    }
 
    // GPS speed
@@ -314,19 +317,12 @@
    // Voltage (Ampere Sensor) 
    void send_Voltage_ampere(void)
    {
-         uint16_t Datas_Voltage_Amp_bp;
-         uint16_t Datas_Voltage_Amp_ap;
          uint16_t Datas_Current;   
 
 					float volts = battery_voltage1*2; //in 0.5v resolution
-         Datas_Voltage_Amp_bp = volts; 
-         Datas_Voltage_Amp_ap = (volts-int(volts))*100;
-         Datas_Current = current_amps1;
+         sendTwoPart(ID_Voltage_Amp_bp, ID_Voltage_Amp_ap, volts);
 
-         sendDataHead(ID_Voltage_Amp_bp);
-         write_FrSky16(Datas_Voltage_Amp_bp);
-         sendDataHead(ID_Voltage_Amp_ap);
-         write_FrSky16(Datas_Voltage_Amp_ap);   
+         Datas_Current = current_amps1;
          sendDataHead(ID_Current);
          write_FrSky16(Datas_Current);
 
