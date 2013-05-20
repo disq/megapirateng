@@ -151,13 +151,13 @@
       write_FrSky8_internal(Protocol_Tail);
    }
 
-   static void sendTwoPart(uint8_t bpId, uint8_t apId, float value)
+   static void sendTwoPart(uint8_t bpId, uint8_t apId, float value, uint16_t resolution = 100)
    {
          int16_t bpVal;
          uint16_t apVal;
 
          bpVal = floor(value); // value before the decimal point ("bp" is "before point")
-         apVal = (value - int(value)) * 100; // value after the decimal point
+         apVal = (value - int(value)) * resolution; // value after the decimal point
 
          sendDataHead(bpId);
          write_FrSky16(bpVal);
@@ -316,15 +316,20 @@
    // Voltage (Ampere Sensor)
    void send_Voltage_ampere(void)
    {
-         uint16_t Datas_Current;
+          uint16_t Datas_Voltage_vBat_bp;
+         uint16_t Datas_Voltage_vBat_ap;
+         uint16_t volts;
+         volts = battery_voltage1 * 1100 / 21; // using *110/21 results in 10% of the voltage shown in OpenTx
+         Datas_Voltage_vBat_bp = volts / 100;
+         Datas_Voltage_vBat_ap = (volts % 100) / 10;
 
-					float volts = battery_voltage1*2; //in 0.5v resolution
-         sendTwoPart(ID_Voltage_Amp_bp, ID_Voltage_Amp_ap, volts);
+         sendDataHead(ID_Voltage_Amp_bp);
+         write_FrSky16(Datas_Voltage_vBat_bp);
+         sendDataHead(ID_Voltage_Amp_ap);
+         write_FrSky16(Datas_Voltage_vBat_ap);
 
-         Datas_Current = current_amps1;
          sendDataHead(ID_Current);
-         write_FrSky16(Datas_Current);
-
+         write_FrSky16(current_amps1 * 10);
    }
 
 // Fuel level
